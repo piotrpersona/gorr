@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/piotrpersona/gorr/log"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
@@ -18,7 +19,7 @@ type httpServer struct {
 func (s *httpServer) Run(parent context.Context) (done <-chan struct{}, err error) {
 	go func() {
 		if err := s.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			fmt.Println("http erver listen error", err)
+			log.Errorf("http erver listen error, err: %s", err)
 		}
 	}()
 
@@ -31,7 +32,7 @@ func (s *httpServer) Run(parent context.Context) (done <-chan struct{}, err erro
 			defer cancel()
 
 			if err := s.srv.Shutdown(ctx); err != nil {
-				fmt.Println("http server shutdown error", err)
+				log.Errorf("http server shutdown err: %s", err)
 			}
 			doneCh <- struct{}{}
 		}

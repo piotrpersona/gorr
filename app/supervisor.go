@@ -2,8 +2,9 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"sync"
+
+	"github.com/piotrpersona/gorr/log"
 )
 
 type supervisor struct {
@@ -24,13 +25,13 @@ func (s *supervisor) Run(ctx context.Context) (done <-chan struct{}, err error) 
 			go func(app Application) {
 				defer wg.Done()
 				name := app.Name()
-				fmt.Println(name, "started")
+				log.Infof("app '%s' started", name)
 				appDone, err := app.Run(ctx)
 				if err != nil {
 					return
 				}
 				<-appDone
-				fmt.Println(name, "terminated gracefully")
+				log.Infof("app '%s' terminated gracefully", name)
 			}(app)
 			wg.Wait()
 			doneCh <- struct{}{}
