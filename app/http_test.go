@@ -9,7 +9,7 @@ import (
 )
 
 func Test_httpServers(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*100)
 	defer cancel()
 
 	done, err := NewPprofHttpServer(8000).Run(ctx)
