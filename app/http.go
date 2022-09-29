@@ -69,3 +69,11 @@ func NewPprofHttpServer(port int) Application {
 
 	return &httpServer{srv: srv, name: "pprof"}
 }
+
+func NewHttpServer(router *mux.Router, port int, name string) Application {
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%d", port),
+		Handler: router,
+	}
+	return &httpServer{srv: srv, name: name}
+}
