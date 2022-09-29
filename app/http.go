@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	_ "net/http/pprof"
+
 	"github.com/gorilla/mux"
 	"github.com/piotrpersona/gorr/log"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
