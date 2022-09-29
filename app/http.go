@@ -49,25 +49,13 @@ func (s *httpServer) Name() string {
 func NewPrometheusMetricsHttpServer(port int) Application {
 	router := mux.NewRouter()
 	router.Path("/promethues").Handler(promhttp.Handler())
-
-	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", port),
-		Handler: router,
-	}
-
-	return &httpServer{srv: srv, name: "prometheus"}
+	return NewHttpServer(router, port, "prometheus")
 }
 
 func NewPprofHttpServer(port int) Application {
 	router := mux.NewRouter()
 	router.Path("/debug/pprof").Handler(http.DefaultServeMux)
-
-	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", port),
-		Handler: router,
-	}
-
-	return &httpServer{srv: srv, name: "pprof"}
+	return NewHttpServer(router, port, "pprof")
 }
 
 func NewHttpServer(router *mux.Router, port int, name string) Application {
