@@ -54,7 +54,7 @@ func NewPrometheusMetricsHttpServer(port int) Application {
 
 func NewPprofHttpServer(port int) Application {
 	router := mux.NewRouter()
-	router.Path("/debug/pprof").Handler(http.DefaultServeMux)
+	router.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 	return NewHttpServer(router, port, "pprof")
 }
 
