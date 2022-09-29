@@ -48,7 +48,7 @@ func (s *httpServer) Name() string {
 
 func NewPrometheusMetricsHttpServer(port int) Application {
 	router := mux.NewRouter()
-	router.Path("/promethues").Handler(promhttp.Handler())
+	router.Path("/prometheus").Handler(promhttp.Handler())
 	return NewHttpServer(router, port, "prometheus")
 }
 
