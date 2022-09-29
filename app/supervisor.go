@@ -67,8 +67,8 @@ func (s *supervisor) Run(parent context.Context) (done <-chan struct{}, err erro
 				if err != nil {
 					return
 				}
-				s.logStopped(appName)
 				<-appDone
+				s.logStopped(appName)
 			}(app)
 		}
 		wg.Wait()
