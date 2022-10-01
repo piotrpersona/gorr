@@ -9,11 +9,7 @@ import (
 	"github.com/piotrpersona/gorr/log"
 )
 
-type Controller[B, R any] interface {
-	Handle(body B, request *http.Request) (response R, status int, err error)
-}
-
-func HandleJSON[B, R any](controller Controller[B, R]) http.HandlerFunc {
+func HandleJSON[B, R any](handler func(body B, request *http.Request) (response R, status int, err error)) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		bodyBytes, err := ioutil.ReadAll(request.Body)
 		if err != nil {
@@ -31,7 +27,7 @@ func HandleJSON[B, R any](controller Controller[B, R]) http.HandlerFunc {
 			return
 		}
 
-		response, status, err := controller.Handle(requestBody, request)
+		response, status, err := handler(requestBody, request)
 		if err != nil {
 			writeError(writer, "error while processing", err, http.StatusInternalServerError)
 			return
