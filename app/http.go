@@ -8,6 +8,7 @@ import (
 
 	_ "net/http/pprof"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/piotrpersona/gorr/log"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -60,10 +61,35 @@ func NewPprofHttpServer(port int) Application {
 	return NewHttpServer(router, port, "pprof")
 }
 
-func NewHttpServer(router *mux.Router, port int, name string) Application {
+type httpServerConfig struct {
+	withCors bool
+	corsOpts []handlers.CORSOption
+}
+
+type HttpOption func(*httpServerConfig)
+
+func WithCors(opts ...handlers.CORSOption) HttpOption {
+	return func(hsc *httpServerConfig) {
+		hsc.withCors = true
+		hsc.corsOpts = opts
+	}
+}
+
+func NewHttpServer(router *mux.Router, port int, name string, opts ...HttpOption) Application {
+	hsc := &httpServerConfig{}
+	for _, opt := range opts {
+		opt(hsc)
+	}
+	var handler http.Handler
+	handler = router
+	if hsc.withCors {
+		corsMiddleware := handlers.CORS(hsc.corsOpts...)
+		handler = corsMiddleware(handler)
+	}
+
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
-		Handler: router,
+		Handler: handler,
 	}
 	return &httpServer{srv: srv, name: name}
 }
